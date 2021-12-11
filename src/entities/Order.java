@@ -8,20 +8,19 @@ import java.util.List;
 
 public class Order {
 	
-	private static SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+	SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:MM:ss");
 	
 	private Date moment;
-	private OrderItem items;
-	private Product product;
-	private Client client;
 	private OrderStatus status;
-	private List<OrderItem> item = new ArrayList<>();
 	
-	private Order(){
-	}
-	private Order(Date moment, OrderStatus status) {
+	private Client client;
+		
+	private List<OrderItem> items = new ArrayList<OrderItem>();
+	
+	public Order(Date moment, OrderStatus status, Client client) {
 		this.moment = moment;
 		this.status = status;
+		this.client = client;		
 	}
 	public Date getMoment() {
 		return moment;
@@ -35,31 +34,43 @@ public class Order {
 	public void setStatus(OrderStatus status) {
 		this.status = status;
 	}
-	public Product getProduct() {
-		return product;
-	}
-	public void setProduct(Product product) {
-		this.product = product;
-	}
 	public Client getClient() {
 		return client;
 	}
 	public void setClient(Client client) {
 		this.client = client;
 	}
-	public void setItem(List<OrderItem> item) {
-		this.item = item;
-	}
 	public List<OrderItem> getItem() {
-		return item;
+		return items;
 	}
-	public void addItem(OrderItem itemm) {
-		item.add(itemm);
+	public void addItem(OrderItem item) {
+		items.add(item);
 	}
-	public void removeItem(OrderItem itemm) {
-		item.remove(itemm);
+	public void removeItem(OrderItem item) {
+		items.remove(item);
 	}	
-	public Double Total(Integer quantity, Double price) {
-		return quantity * price;
+	public double total() {
+		double sum =0.0;
+		for(OrderItem it : items) {
+			sum += it.subTotal();
+		}
+		return sum;
+	}
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Order moment: ");
+		sb.append(sdf.format(moment) + "\n");
+		sb.append("Order status: ");
+		sb.append(status + "\n");
+		sb.append("Client: ");
+		sb.append(client + "\n");
+		sb.append("Order items:\n");
+		for (OrderItem item : items) {
+			sb.append(item + "\n");
+		}
+		sb.append("Total price: $");
+		sb.append(String.format("%.2f", total()));
+		return sb.toString();
 	}
 }
